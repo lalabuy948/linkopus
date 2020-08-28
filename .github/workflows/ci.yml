@@ -27,6 +27,7 @@ jobs:
           go test
 
       - name: Run golangci-lint
+        working-directory: backend
         uses: golangci/golangci-lint-action@v1.2.1
         with:
           version: v1.29
