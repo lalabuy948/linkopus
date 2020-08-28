@@ -1,0 +1,119 @@
+version: '3.8'
+
+networks:
+  web-network:
+    external: true
+  linkopus-network:
+    external: false
+    driver: bridge
+
+volumes:
+  mongodb_volume:
+  mongodb_volume_1:
+  mongodb_volume_2:
+
+services:
+  linkopus-backend:
+    container_name: linkopus_backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - SERVER_PORT=${SERVER_PORT}
+      - NSQ_URL=${NSQ_URL}
+      - REDIS_URL=${REDIS_URL}
+      - MONGO_DB_URL=${MONGO_DB_URL}
+    networks:
+      - linkopus-network
+    ports:
+      - "${SERVER_PORT}"
+    restart: always
+
+  redis:
+    image: redis:6.0.6-alpine3.12
+    container_name: redis_master
+    networks:
+      - linkopus-network
+    ports:
+      - "${REDIS_PORT}:6379"
+    volumes:
+      - ./infra/etc/redis.dev.conf:/redis.conf
+    command: [ "redis-server", "/redis.conf" ]
+    restart: always
+
+  redis-slave:
+    image: redis:6.0.6-alpine3.12
+    container_name: redis_slave
+    networks:
+      - linkopus-network
+    command: redis-server --slaveof redis ${REDIS_PORT}
+    restart: always
+
+  nsqlookupd:
+    image: nsqio/nsq
+    container_name: nsqlookupd
+    command: /nsqlookupd
+    networks:
+      - linkopus-network
+    restart: always
+
+  nsqd:
+    image: nsqio/nsq
+    container_name: nsqd
+    command: /nsqd --lookupd-tcp-address=nsqlookupd:4160
+    networks:
+      - linkopus-network
+    restart: always
+
+  nsqadmin:
+    image: nsqio/nsq
+    container_name: nsqadmin
+    command: /nsqadmin --lookupd-http-address=nsqlookupd:4161
+    networks:
+      - linkopus-network
+    restart: always
+
+  mongodb:
+    image: mongo:4.4.0-bionic
+    container_name: mongodb
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - mongodb_volume:/data/db
+    ports:
+      - 27017
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "rs0" ]
+    networks:
+      - linkopus-network
+    restart: always
+
+  mongodb1:
+    image: mongo:4.4.0-bionic
+    container_name: mongodb1
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - mongodb_volume_1:/data/db
+    ports:
+      - 27017
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "rs0" ]
+    networks:
+      - linkopus-network
+    restart: always
+
+  mongodb2:
+    image: mongo:4.4.0-bionic
+    container_name: mongodb2
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - mongodb_volume_2:/data/db
+    ports:
+      - 27017
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "rs0" ]
+    networks:
+      - linkopus-network
+    restart: always

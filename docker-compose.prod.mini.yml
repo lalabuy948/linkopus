@@ -1,0 +1,84 @@
+version: '3.8'
+
+networks:
+  web-network:
+    external: true
+  linkopus-network:
+    external: false
+    driver: bridge
+
+volumes:
+  mongodb_volume:
+
+services:
+  linkopus-backend:
+    container_name: linkopus_backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - SERVER_PORT=${SERVER_PORT}
+      - NSQ_URL=${NSQ_URL}
+      - REDIS_URL=${REDIS_URL}
+      - MONGO_DB_URL=${MONGO_DB_URL}
+    networks:
+      - web-network
+      - linkopus-network
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    restart: always
+
+  redis:
+    image: redis:6.0.6-alpine3.12
+    container_name: redis_master
+    networks:
+      - linkopus-network
+    ports:
+      - "${REDIS_PORT}:6379"
+    restart: always
+
+  nsqlookupd:
+    image: nsqio/nsq
+    container_name: nsqlookupd
+    command: /nsqlookupd
+    networks:
+      - linkopus-network
+    restart: always
+    ports:
+      - "4160:4160"
+      - "4161:4161"
+
+  nsqd:
+    image: nsqio/nsq
+    container_name: nsqd
+    command: /nsqd --lookupd-tcp-address=nsqlookupd:4160
+    networks:
+      - linkopus-network
+    restart: always
+    ports:
+      - "4150:4150"
+      - "4151:4151"
+
+  nsqadmin:
+    image: nsqio/nsq
+    container_name: nsqadmin
+    command: /nsqadmin --lookupd-http-address=nsqlookupd:4161
+    networks:
+      - linkopus-network
+    restart: always
+    ports:
+      - "4171:4171"
+
+  mongodb:
+    image: mongo:4.4.0-bionic
+    container_name: mongodb
+    environment:
+      - MONGO_DATA_DIR=/data/db
+    volumes:
+      - mongodb_volume:/data/db
+    ports:
+      - 27017:27017
+    command: mongod
+    networks:
+      - linkopus-network
+    restart: always

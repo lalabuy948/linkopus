@@ -1,0 +1,7 @@
+.idea
+.vscode
+
+backend
+test/read/*txt
+
+.env

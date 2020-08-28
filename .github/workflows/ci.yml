@@ -1,0 +1,33 @@
+name: build
+
+on:
+  push:
+    branches:
+    tags:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: set up go 1.14
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+        id: go
+
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: build and test
+        working-directory: backend
+        run: |
+          export GO111MODULE=on
+          go get -v
+          go test
+
+      - name: Run golangci-lint
+        working-directory: backend
+        uses: golangci/golangci-lint-action@v1.2.1
+        with:
+          version: v1.29

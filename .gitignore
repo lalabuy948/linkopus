@@ -1,0 +1,10 @@
+.vscode
+.idea
+
+*.DS_Store
+
+.env
+
+*.log
+*.out
+*.pid
