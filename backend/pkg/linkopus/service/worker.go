@@ -59,10 +59,9 @@ func (w *Worker) updateLinkView(linkVew *LinkView) error {
 	}
 
 	action := bson.D{
-		{
-			"$inc", bson.D{
-				{"amount", 1},
-			},
+		{Key: "$inc", Value: bson.D{
+			{Key: "amount", Value: 1},
+		},
 		},
 	}
 

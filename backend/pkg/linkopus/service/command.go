@@ -90,5 +90,5 @@ func (c *Command) SaveLinkView(link string) {
 		Date: todayDate,
 	})
 
-	c.producer.Publish(messageBody)
+	_ = c.producer.Publish(messageBody) //nolint
 }

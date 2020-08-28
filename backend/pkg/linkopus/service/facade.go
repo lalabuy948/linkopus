@@ -1,5 +1,3 @@
-// +build !emoji
-
 package service
 
 import (
@@ -45,7 +43,7 @@ func (f *Facade) HandleLinkMapInsert(link string) (*LinkMap, error) {
 	}
 
 	linkHash := computeLinkHash(link)
-	result, err = f.query.QueryLinkMap("", linkHash)
+	_, err = f.query.QueryLinkMap("", linkHash)
 	if err != mongo.ErrNoDocuments {
 		return f.HandleLinkMapInsert(linkHash + link)
 	}
@@ -75,7 +73,7 @@ func (f *Facade) HandleLinkExtraction(linkHash string) (*LinkMap, error) {
 	}
 
 	if linkMap != nil {
-		go f.redisCache.CacheLinkMap(*linkMap)
+		go f.redisCache.CacheLinkMap(*linkMap) //nolint
 	}
 
 	return linkMap, nil
@@ -102,7 +100,7 @@ func (f *Facade) HandleTodayTopLinksViewsExtraction() (*[]LinkView, error) {
 	}
 
 	if len(*topLinkViews) > 0 {
-		go f.redisCache.CacheTopViews(todayDate, *topLinkViews)
+		go f.redisCache.CacheTopViews(todayDate, *topLinkViews) //nolint
 	}
 
 	return topLinkViews, err
@@ -118,7 +116,7 @@ func (f *Facade) StopMessageProducer() {
 // But.. emoji its more fun 🙆‍♀️ facade_emoji.go
 func computeLinkHash(link string) string {
 	hashFunc := sha256.New()
-	hashFunc.Write([]byte(link))
+	hashFunc.Write([]byte(link)) //nolint
 	sha := base64.URLEncoding.EncodeToString(hashFunc.Sum(nil))
 
 	return sha[1:7]

@@ -65,7 +65,7 @@ func (r *Repository) FetchTopLinksViews(criteria bson.M, limit int) ([]bson.M, e
 
 	findOptions := options.Find()
 	findOptions.SetLimit(int64(limit))
-	findOptions.SetSort(bson.D{{"amount", -1}})
+	findOptions.SetSort(bson.D{{Key: "amount", Value: -1}})
 
 	cursor, err := linksCollection.Find(context.Background(), criteria, findOptions)
 	if err != nil {

@@ -58,5 +58,5 @@ func main() {
 
 	fmt.Println(metrics.StatusCodes)
 	fmt.Println(metrics.Errors)
-	fmt.Println(fmt.Sprintf("--- "))
+	fmt.Println("--- ")
 }
