@@ -1,11 +1,13 @@
-package service
+package queue
 
 import (
 	"encoding/json"
 	"fmt"
 	"strings"
 
-	"github.com/lalabuy948/linkopus/backend/pkg/linkopus/database"
+	"github.com/lalabuy948/linkopus/backend/pkg/linkopus/entity"
+
+	"github.com/lalabuy948/linkopus/backend/pkg/linkopus/data"
 
 	"go.mongodb.org/mongo-driver/bson"
 
@@ -14,12 +16,12 @@ import (
 
 // Worker holds write manager and consumer config.
 type Worker struct {
-	manager        *database.Manager
+	manager        *data.Manager
 	consumerConfig *nsq.ConsumerConfig
 }
 
 // NewWorker returns instance of the background worker.
-func NewWorker(m *database.Manager, c *nsq.ConsumerConfig) *Worker {
+func NewWorker(m *data.Manager, c *nsq.ConsumerConfig) *Worker {
 	return &Worker{m, c}
 }
 
@@ -29,7 +31,7 @@ func (w *Worker) Consume() {
 	consumer, _ := nsq.StartConsumer(*w.consumerConfig)
 
 	for msg := range consumer.Messages() {
-		var linkVew LinkView
+		var linkVew entity.LinkView
 
 		err := json.Unmarshal(msg.Body[:], &linkVew)
 		if err == nil {
@@ -43,7 +45,7 @@ func (w *Worker) Consume() {
 }
 
 // updateLinkView upsert views count by link and date.
-func (w *Worker) updateLinkView(linkVew *LinkView) error {
+func (w *Worker) updateLinkView(linkVew *entity.LinkView) error {
 	date := linkVew.Date
 	dateSplit := strings.Split(date, "-")
 	year := dateSplit[0]

@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/lalabuy948/linkopus/backend/pkg/linkopus/entity"
+
 	"github.com/brianvoe/gofakeit/v5"
 	"github.com/go-redis/cache/v8"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -29,7 +31,7 @@ func NewFacade(q *Query, c *Command, rc *Cache) *Facade {
 // First of all this function will check if url is valid.
 // Second check if this link already exists in database.
 // Finally store it in links collection and cache it for 5 minutes.
-func (f *Facade) HandleLinkMapInsert(link string) (*LinkMap, error) {
+func (f *Facade) HandleLinkMapInsert(link string) (*entity.LinkMap, error) {
 	if !isValidUrl(link) {
 		return nil, errors.New("service: invalid url")
 	}
@@ -55,7 +57,7 @@ func (f *Facade) HandleLinkMapInsert(link string) (*LinkMap, error) {
 		return nil, errors.New("service: failed to save mapping")
 	}
 
-	linkMap := &LinkMap{Link: link, LinkHash: linkHash}
+	linkMap := &entity.LinkMap{Link: link, LinkHash: linkHash}
 
 	return linkMap, err
 }
@@ -63,7 +65,7 @@ func (f *Facade) HandleLinkMapInsert(link string) (*LinkMap, error) {
 // HandleLinkExtraction extracting stored link according to given hash.
 // First check if link exists in cache and return the result, otherwise
 // check in links collection and store it in cache for 5 minutes.
-func (f *Facade) HandleLinkExtraction(linkHash string) (*LinkMap, error) {
+func (f *Facade) HandleLinkExtraction(linkHash string) (*entity.LinkMap, error) {
 	linkMap, err := f.redisCache.GetCachedLinkMap(linkHash)
 	if err != cache.ErrCacheMiss && linkMap != nil {
 		return linkMap, nil
@@ -84,7 +86,7 @@ func (f *Facade) HandleLinkExtraction(linkHash string) (*LinkMap, error) {
 // HandleLinkExtraction extracting stored link according to today's date.
 // First check if stats exist in cache and return the result, otherwise
 // check in views collection and store it in cache for 1 minute.
-func (f *Facade) HandleTodayTopLinksViewsExtraction() (*[]LinkView, error) {
+func (f *Facade) HandleTodayTopLinksViewsExtraction() (*[]entity.LinkView, error) {
 	todayDate := time.Now().Format("2006-01-02")
 	dateSplit := strings.Split(todayDate, "-")
 	year := dateSplit[0]

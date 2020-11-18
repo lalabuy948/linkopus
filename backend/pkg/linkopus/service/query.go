@@ -5,7 +5,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/lalabuy948/linkopus/backend/pkg/linkopus/database"
+	"github.com/lalabuy948/linkopus/backend/pkg/linkopus/entity"
+
+	"github.com/lalabuy948/linkopus/backend/pkg/linkopus/data"
 
 	"go.mongodb.org/mongo-driver/mongo"
 
@@ -14,16 +16,16 @@ import (
 
 // Query holds represents query service. Holds read repository.
 type Query struct {
-	repository *database.Repository
+	repository *data.Repository
 }
 
 // NewQuery returns instance of linkopus query service.
-func NewQuery(r *database.Repository) *Query {
+func NewQuery(r *data.Repository) *Query {
 	return &Query{r}
 }
 
 // QueryLinkMap will build query based on given link or linkHash, query data storage and return LinkMap.
-func (q *Query) QueryLinkMap(link string, linkHash string) (*LinkMap, error) {
+func (q *Query) QueryLinkMap(link string, linkHash string) (*entity.LinkMap, error) {
 	var criteria bson.M
 
 	if link != "" {
@@ -37,7 +39,7 @@ func (q *Query) QueryLinkMap(link string, linkHash string) (*LinkMap, error) {
 		return nil, err
 	}
 
-	var linkMap LinkMap
+	var linkMap entity.LinkMap
 
 	bsonBytes, _ := bson.Marshal(result)
 	err = bson.Unmarshal(bsonBytes, &linkMap)
@@ -49,7 +51,7 @@ func (q *Query) QueryLinkMap(link string, linkHash string) (*LinkMap, error) {
 }
 
 // QueryLinkMap will build query based on given link or date, query data storage and return list of LinkView.
-func (q *Query) QueryLinkViews(link string, date string) (*[]LinkView, error) {
+func (q *Query) QueryLinkViews(link string, date string) (*[]entity.LinkView, error) {
 
 	if link == "" {
 		return nil, errors.New("query: link criteria is invalid")
@@ -76,9 +78,9 @@ func (q *Query) QueryLinkViews(link string, date string) (*[]LinkView, error) {
 		return nil, err
 	}
 
-	var linkViews []LinkView
+	var linkViews []entity.LinkView
 	for _, linkViewB := range linkViewsB {
-		var linkView LinkView
+		var linkView entity.LinkView
 		bsonBytes, _ := bson.Marshal(linkViewB)
 		err = bson.Unmarshal(bsonBytes, &linkView)
 		if err == nil {
@@ -91,7 +93,7 @@ func (q *Query) QueryLinkViews(link string, date string) (*[]LinkView, error) {
 
 // QueryTodayTopLinksViews will build query based on given year, month and day.
 // Then query data storage and return list of top LinkView of the current day.
-func (q *Query) QueryTodayTopLinksViews(year string, month string, day string) (*[]LinkView, error) {
+func (q *Query) QueryTodayTopLinksViews(year string, month string, day string) (*[]entity.LinkView, error) {
 	criteria := bson.M{
 		"$and": []bson.M{
 			{"year": bson.M{"$eq": year}},
@@ -105,9 +107,9 @@ func (q *Query) QueryTodayTopLinksViews(year string, month string, day string) (
 		return nil, err
 	}
 
-	var linkViews []LinkView
+	var linkViews []entity.LinkView
 	for _, linkViewB := range linkViewsB {
-		var linkView LinkView
+		var linkView entity.LinkView
 		bsonBytes, _ := bson.Marshal(linkViewB)
 		err = bson.Unmarshal(bsonBytes, &linkView)
 		if err == nil {

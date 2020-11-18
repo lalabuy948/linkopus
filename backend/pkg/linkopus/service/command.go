@@ -5,7 +5,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/lalabuy948/linkopus/backend/pkg/linkopus/database"
+	"github.com/lalabuy948/linkopus/backend/pkg/linkopus/entity"
+
+	"github.com/lalabuy948/linkopus/backend/pkg/linkopus/data"
 
 	"github.com/segmentio/nsq-go"
 	"go.mongodb.org/mongo-driver/bson"
@@ -13,12 +15,12 @@ import (
 
 // Command represents command service. Holds manager for synchronous writes and producer for asynchronous message passing.
 type Command struct {
-	manager  *database.Manager
+	manager  *data.Manager
 	producer *nsq.Producer
 }
 
 // NewCommand return instance of linkopus Command service.
-func NewCommand(m *database.Manager, p *nsq.Producer) *Command {
+func NewCommand(m *data.Manager, p *nsq.Producer) *Command {
 	return &Command{m, p}
 }
 
@@ -85,7 +87,7 @@ func (c *Command) DeleteLinkViewByTime(year string, month string, day string) er
 func (c *Command) SaveLinkView(link string) {
 	todayDate := time.Now().Format("2006-01-02")
 
-	messageBody, _ := json.Marshal(&LinkView{
+	messageBody, _ := json.Marshal(&entity.LinkView{
 		Link: link,
 		Date: todayDate,
 	})

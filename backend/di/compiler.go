@@ -6,8 +6,10 @@ import (
 	"log"
 	"time"
 
+	"github.com/lalabuy948/linkopus/backend/pkg/linkopus/queue"
+
 	"github.com/lalabuy948/linkopus/backend/config"
-	"github.com/lalabuy948/linkopus/backend/pkg/linkopus/database"
+	"github.com/lalabuy948/linkopus/backend/pkg/linkopus/data"
 	"github.com/lalabuy948/linkopus/backend/pkg/linkopus/service"
 
 	"github.com/segmentio/nsq-go"
@@ -25,7 +27,7 @@ type Container struct {
 	QueryService   *service.Query
 	CommandService *service.Command
 	FacadeService  *service.Facade
-	WorkerService  *service.Worker
+	WorkerService  *queue.Worker
 }
 
 // Compile constructing service container and all necessary DIs.
@@ -38,14 +40,14 @@ func Compile(cfg *config.Config) *Container {
 
 	cacheService := service.NewCache(cacheClient)
 
-	repository := database.NewRepository(mongoClient)
-	manager := database.NewManager(mongoClient)
+	repository := data.NewRepository(mongoClient)
+	manager := data.NewManager(mongoClient)
 
 	queryService := service.NewQuery(repository)
 	commandService := service.NewCommand(manager, nqsClient)
 	facadeService := service.NewFacade(queryService, commandService, cacheService)
 
-	workerService := service.NewWorker(manager, nqsConsumer)
+	workerService := queue.NewWorker(manager, nqsConsumer)
 
 	return &Container{
 		queryService,

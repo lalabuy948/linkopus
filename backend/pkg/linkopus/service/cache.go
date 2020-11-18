@@ -6,6 +6,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/lalabuy948/linkopus/backend/pkg/linkopus/entity"
+
 	"github.com/go-redis/cache/v8"
 )
 
@@ -22,7 +24,7 @@ func NewCache(rc *cache.Cache) *Cache {
 var ctx = context.Background()
 
 // CacheLinkMap stores given LinkMap using LinkMap.LinkHash as a key.
-func (c *Cache) CacheLinkMap(linkMap LinkMap) error {
+func (c *Cache) CacheLinkMap(linkMap entity.LinkMap) error {
 	err := c.redisCache.Set(&cache.Item{
 		Ctx:   ctx,
 		Key:   linkMap.LinkHash,
@@ -38,8 +40,8 @@ func (c *Cache) CacheLinkMap(linkMap LinkMap) error {
 }
 
 // CacheLinkMap extracts LinkMap by given LinkMap.LinkHash as first function argument.
-func (c *Cache) GetCachedLinkMap(key string) (*LinkMap, error) {
-	var linkMap LinkMap
+func (c *Cache) GetCachedLinkMap(key string) (*entity.LinkMap, error) {
+	var linkMap entity.LinkMap
 	if err := c.redisCache.Get(ctx, key, &linkMap); err != nil {
 		return nil, err
 	}
@@ -48,7 +50,7 @@ func (c *Cache) GetCachedLinkMap(key string) (*LinkMap, error) {
 }
 
 // CacheTopViews stores given [] LinkView using today's date (2006-01-02) as a key.
-func (c *Cache) CacheTopViews(todayDate string, linkViews []LinkView) error {
+func (c *Cache) CacheTopViews(todayDate string, linkViews []entity.LinkView) error {
 	err := c.redisCache.Set(&cache.Item{
 		Ctx:   ctx,
 		Key:   todayDate,
@@ -64,8 +66,8 @@ func (c *Cache) CacheTopViews(todayDate string, linkViews []LinkView) error {
 }
 
 // GetCachedTopViews extracts [] LinkView by given date (2006-01-02) as first function argument.
-func (c *Cache) GetCachedTopViews(todayDate string) (*[]LinkView, error) {
-	var linkViews []LinkView
+func (c *Cache) GetCachedTopViews(todayDate string) (*[]entity.LinkView, error) {
+	var linkViews []entity.LinkView
 	if err := c.redisCache.Get(ctx, todayDate, &linkViews); err != nil {
 		return nil, err
 	}
