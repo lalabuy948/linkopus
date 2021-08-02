@@ -1,5 +1,5 @@
 # Build stage
-FROM golang:1.14-alpine AS build-env
+FROM golang:1.16-alpine AS build-env
 
 ENV GO111MODULE=on \
     CGO_ENABLED=0 \
