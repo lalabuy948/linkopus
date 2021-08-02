@@ -13,6 +13,12 @@ go get
 
 go run main.go
 
+or
+
+go build -tags emoji
+
+./backend
+
 cd frontend
 
 npm install
