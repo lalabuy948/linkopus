@@ -41,4 +41,6 @@ npm run start
 
 ### BE Architecture overview
 
-![be-diagram](.github/linkopus.png)
+<p align="center">
+    <img src=".github/linkopus.png">
+</p>
