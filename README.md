@@ -1,6 +1,6 @@
 <br>
 
-<h1 align="center">Linkopus</h1>
+<h1 align="center">Linkopus 🐙</h1>
 
 <p align="center">
   <a href="https://goreportcard.com/badge/github.com/lalabuy948/linkopus"><img src="https://img.shields.io/badge/go%20report-A+-brightgreen.svg?style=flat"/></a>
