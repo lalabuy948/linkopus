@@ -84,12 +84,13 @@ func (c *Command) DeleteLinkViewByTime(year string, month string, day string) er
 // ASYNC
 
 // SaveLinkView adds LinkView to the storage if not exists, otherwise will increment the amount of views.
-func (c *Command) SaveLinkView(link string) {
+func (c *Command) SaveLinkView(link string, linkHash string) {
 	todayDate := time.Now().Format("2006-01-02")
 
 	messageBody, _ := json.Marshal(&entity.LinkView{
-		Link: link,
-		Date: todayDate,
+		Link:     link,
+		LinkHash: linkHash,
+		Date:     todayDate,
 	})
 
 	_ = c.producer.Publish(messageBody) //nolint

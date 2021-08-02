@@ -3,6 +3,7 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"go.mongodb.org/mongo-driver/mongo"
 
@@ -27,6 +28,8 @@ type (
 func (s *server) redirectHandler(ctx *fasthttp.RequestCtx) {
 	linkHash := string(ctx.Path())[1:]
 
+	fmt.Println(linkHash)
+
 	linkMap, err := s.container.FacadeService.HandleLinkExtraction(linkHash)
 	if err != nil || linkMap == nil {
 		responseErrorJson(ctx, err)
@@ -34,7 +37,7 @@ func (s *server) redirectHandler(ctx *fasthttp.RequestCtx) {
 	}
 
 	ctx.Redirect(linkMap.Link, fasthttp.StatusTemporaryRedirect)
-	go s.container.CommandService.SaveLinkView(linkMap.Link)
+	go s.container.CommandService.SaveLinkView(linkMap.Link, linkMap.LinkHash)
 
 	return
 }

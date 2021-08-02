@@ -4,6 +4,7 @@ import "shards-ui/dist/css/shards.min.css"
 
 import React, { useState, useEffect } from 'react';
 import {
+    Container,
     FormInput,
     Button,
     InputGroupAddon,
@@ -15,6 +16,9 @@ import {
     ListGroup,
     ListGroupItem,
     ListGroupItemHeading,
+    Popover,
+    PopoverHeader,
+    PopoverBody,
 } from "shards-react";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
@@ -30,6 +34,7 @@ function App() {
 
   const [userLink, setUserLink] = useState("");
   const [urlToCopy, setUrlToCopy] = useState("");
+  const [urlToCopyCopied, setUrlToCopyCopied] = useState(false);
 
   const [userLinkValid, setUserLinkValid] = useState(false);
   const [userLinkInvalid, setUserLinkInvalid] = useState(false);
@@ -100,26 +105,26 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-
-          <Row className="" style={{ minWidth: '50%' }}>
-
-              <Col sm={{ size: 10, order: 2, offset: 1 }}>
+          <Container>
 
                   { topLinks.length > 0 &&
-                      <ListGroup>
+                      <ListGroup small>
                           <ListGroupItemHeading>
                               Top Links
                           </ListGroupItemHeading>
 
                           {topLinks.map((topLink) => {
                               return <ListGroupItem
-                                  disabled={true}
-                                  key={topLink.link}
-                                  style={{textAlign: 'justify'}}
-                              >
-                                  {topLink.link} {topLink.amount}
+                                    disabled={false}
+                                    key={topLink.link}
+                                    style={{textAlign: 'justify', fontSize: 14,}}
+                                >
+                                <Row>
+                                    <Col style={{ textAlign: 'left' }}>{topLink.link}</Col>
+                                    <Col style={{ textAlign: 'right' }}>{topLink.amount}</Col>
+                                </Row>
                               </ListGroupItem>
-                          })
+                            })
                           }
                       </ListGroup>
                   }
@@ -155,19 +160,35 @@ function App() {
                   <Collapse open={showLinkHash} style={{marginTop: '10px'}}>
                       <InputGroup>
 
-                          <FormInput size="lg" disabled value={urlToCopy} />
+                          <FormInput size="lg" value={urlToCopy} readOnly/>
 
                           <InputGroupAddon type="append" style={{align: 'center'}}>
                               <CopyToClipboard text={urlToCopy}>
-                                <Button theme="info">cpy!</Button>
+                                <Button id="url-to-cpy-button" theme="info" onClick={() => setUrlToCopyCopied(true)}>cpy!</Button>
                               </CopyToClipboard>
+
+                                <Popover
+                                        placement="top"
+                                        open={urlToCopyCopied}
+                                        toggle={() => setUrlToCopyCopied(false)}
+                                        target="#url-to-cpy-button"
+                                        >
+                                    <PopoverHeader>Cped!</PopoverHeader>
+                                    <PopoverBody>
+                                        Supposed to be in your clipboard..
+                                    </PopoverBody>
+                                </Popover>
                           </InputGroupAddon>
                       </InputGroup>
                   </Collapse>
-              </Col>
-          </Row>
 
-          <span style={{ marginTop: '50px' }}>Powered by <a href="https://github.com/lalabuy948/linkopus">linkopus</a></span>
+                  <br/>
+                  <br/>
+                  <br/>
+        <span style={{ marginTop: '50px' }}>Powered by <a href="https://github.com/lalabuy948/linkopus">linkopus</a></span>
+
+        </Container>
+
       </header>
     </div>
   );

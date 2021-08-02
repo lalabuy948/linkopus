@@ -102,7 +102,7 @@ func (q *Query) QueryTodayTopLinksViews(year string, month string, day string) (
 		},
 	}
 
-	linkViewsB, err := q.repository.FetchTopLinksViews(criteria, 10)
+	linkViewsB, err := q.repository.FetchTopLinksViews(criteria, 5)
 	if err != nil && err != mongo.ErrNoDocuments {
 		return nil, err
 	}
