@@ -76,7 +76,7 @@ services:
     volumes:
       - mongodb_volume:/data/db
     ports:
-      - 27017:27017
+      - "${MONGO_PORT}:27017"
     command: mongod
     networks:
       - linkopus-network

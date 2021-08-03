@@ -54,6 +54,7 @@ func (w *Worker) updateLinkView(linkVew *entity.LinkView) error {
 
 	criteria := bson.D{
 		{Key: "link", Value: linkVew.Link},
+		{Key: "linkHash", Value: linkVew.LinkHash},
 		{Key: "date", Value: date},
 		{Key: "year", Value: year},
 		{Key: "month", Value: month},
