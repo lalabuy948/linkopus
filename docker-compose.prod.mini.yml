@@ -1,8 +1,6 @@
 version: '3.8'
 
 networks:
-  web-network:
-    external: true
   linkopus-network:
     external: false
     driver: bridge
@@ -22,11 +20,12 @@ services:
       - REDIS_URL=${REDIS_URL}
       - MONGO_DB_URL=${MONGO_DB_URL}
     networks:
-      - web-network
       - linkopus-network
     ports:
       - "${SERVER_PORT}:${SERVER_PORT}"
     restart: always
+    depends_on:
+      - "mongodb"
 
   redis:
     image: redis:6.0.6-alpine3.12
