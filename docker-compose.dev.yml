@@ -2,12 +2,12 @@ version: '3.8'
 
 services:
 
-  # redis:
-  #   image: redis:6.0.6-alpine3.12
-  #   ports:
-  #     - '6379:6379'
-  #   volumes:
-  #     - ./infra/etc/redis.dev.conf:/usr/local/etc/redis/redis.conf
+  redis:
+    image: redis:6.0.6-alpine3.12
+    ports:
+      - '6379:6379'
+    volumes:
+      - ./infra/etc/redis.dev.conf:/usr/local/etc/redis/redis.conf
 
   nsqlookupd:
     image: nsqio/nsq

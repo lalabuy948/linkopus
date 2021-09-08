@@ -8,3 +8,5 @@
 *.log
 *.out
 *.pid
+
+infra/vendor/*

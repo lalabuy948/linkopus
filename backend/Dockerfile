@@ -1,5 +1,5 @@
 # Build stage
-FROM golang:1.16-alpine AS build-env
+FROM golang:1.17-alpine AS build-env
 
 ENV GO111MODULE=on \
     CGO_ENABLED=0 \
@@ -13,7 +13,8 @@ RUN go mod download
 RUN go build -tags emoji -o backend
 
 # final stage
-FROM alpine:3.9.5
+FROM alpine:3.13.6
+
 WORKDIR /app
 COPY --from=build-env /go/src/app/backend backend
 
