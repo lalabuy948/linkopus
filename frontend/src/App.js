@@ -107,8 +107,8 @@ function App() {
       <header className="App-header">
           <Container>
 
-                  { topLinks.length > 0 &&
-                      <ListGroup small>
+                  {/* { topLinks.length > 0 &&
+                      <ListGroup small className="main-content">
                           <ListGroupItemHeading>
                               Top Links
                           </ListGroupItemHeading>
@@ -120,18 +120,18 @@ function App() {
                                     style={{textAlign: 'justify', fontSize: 14,}}
                                 >
                                 <Row>
-                                    <Col style={{ textAlign: 'left' }}>{topLink.link}</Col>
+                                    <Col style={{ textAlign: 'left' }}>{window.location.href + topLink.linkHash}</Col>
                                     <Col style={{ textAlign: 'right' }}>{topLink.amount}</Col>
                                 </Row>
                               </ListGroupItem>
                             })
                           }
                       </ListGroup>
-                  }
+                  } */}
 
                   <br/>
 
-                  <InputGroup seamless onSubmit={handleUserLinkSubmit}>
+                  <InputGroup seamless onSubmit={handleUserLinkSubmit} className="main-content">
                       <InputGroupAddon type="prepend">
                           <InputGroupText>
                               <FontAwesomeIcon icon={faLink} />
@@ -157,7 +157,7 @@ function App() {
                   </InputGroup>
 
 
-                  <Collapse open={showLinkHash} style={{marginTop: '10px'}}>
+                  <Collapse open={showLinkHash} style={{marginTop: '10px'}} className="main-content">
                       <InputGroup>
 
                           <FormInput size="lg" value={urlToCopy} readOnly/>
@@ -185,12 +185,14 @@ function App() {
                   <br/>
                   <br/>
                   <br/>
-        <span style={{ marginTop: '50px' }}>Powered by <a href="https://github.com/lalabuy948/linkopus">linkopus</a></span>
+
+                  <span className="footer">Powered by <a href="https://github.com/lalabuy948/linkopus"> linkopus</a></span>
 
         </Container>
 
       </header>
     </div>
+    
   );
 }
 
